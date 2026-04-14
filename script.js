@@ -10,6 +10,7 @@
         }
     });
     btnConfirmar.addEventListener('click', function() {
+        let total = 1;
         if(checkAcompanhante.checked){
             total = 1 + Number(inputQTD.value)
         }   

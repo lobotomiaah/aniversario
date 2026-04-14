@@ -1,4 +1,3 @@
-
     const checkAcompanhante = document.getElementById('check-acompanhante');
     const areaQuantidade = document.getElementById('area-quantidade');
     const inputQTD = document.getElementById('qtd-pessoas');
@@ -11,7 +10,6 @@
         }
     });
     btnConfirmar.addEventListener('click', function() {
-        let total = 1
         if(checkAcompanhante.checked){
             total = 1 + Number(inputQTD.value)
         }   

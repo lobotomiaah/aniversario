@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Presença</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div id="container">
+        <div class="caixa">
+            <h1>Confirmação de Presença 📝🥳</h1>
+            
+            <input type="text" class="nome" id="input-nome" placeholder="Digite o seu nome aqui!">
+
+            <div class="checkbox-area">
+                <input type="checkbox" id="check-acompanhante">
+                <label for="check-acompanhante">Vou levar acompanhante</label>
+            </div>
+
+            <div id="area-quantidade" class="hidden">
+                <p>Quantas pessoas no total?</p>
+                <input type="number" class="nome" id="qtd-pessoas" min="1" value="1">
+            </div>
+
+            <button id="btn-confirmar">Confirmar Presença</button>
+        </div>
+    </div>
+</body>
+</html>

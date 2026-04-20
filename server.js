@@ -1,7 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const cors = require('cors');
+const con = mysql.createConnection(process.env.MYSQL_URL);
 
 const app = express();
 const port = process.env.PORT || 3000;

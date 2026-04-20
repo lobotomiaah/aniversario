@@ -1,65 +1,46 @@
-require('dotenv').config();
-
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-const con = mysql.createConnection(process.env.MYSQL_URL);
-
-app.use(cors());
-app.use(express.json());
-
-app.get('/', (req, res) => {
-    res.send('API do aniversário funcionando 🎉');
+const checkAcompanhante = document.getElementById('check-acompanhante');
+const areaQuantidade = document.getElementById('area-quantidade');
+const inputQTD = document.getElementById('qtd-pessoas');
+const btnConfirmar = document.getElementById('btn-confirmar');
+const InputN = document.getElementById("input-nome");
+checkAcompanhante.addEventListener('change', function() {
+    if (this.checked) {
+        areaQuantidade.style.display = 'block';
+    } else {
+        areaQuantidade.style.display = 'none';
+    }
 });
 
-con.connect((err) => {
-    if (err) {
-        console.error('Erro ao conectar ao MySQL:', err);
-        return;
+
+btnConfirmar.addEventListener('click', function() {
+    let total = 1;
+    
+    if(checkAcompanhante.checked){
+        total = 1 + Number(inputQTD.value);
     }
+    
+  
+    const DadosEnviar = {
+        nome: InputN.value,
+        total: total
+    };
+    
+    const config = {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify(DadosEnviar) 
+    };
 
-    console.log('Conectado ao MySQL!');
-
-    con.query(`
-        CREATE TABLE IF NOT EXISTS CONVIDADOS (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            nome VARCHAR(255),
-            quantidade INT
-        )
-    `, (err) => {
-        if (err) console.error(err);
-        else console.log("Tabela pronta!");
+    fetch('http://localhost:3000/confirmar', config)
+    .then(response => response.text()) 
+    .then(mensagem => {
+        console.log('Sucesso:', mensagem);
+        alert("Presença confirmada para: " + total + " pessoas(s)!");
+    })
+    .catch(erro => {
+        console.error('Erro ao conectar com o servidor:', erro);
+        alert("Erro ao conectar com o servidor.");
     });
-});
-
-
-app.post('/confirmar', (req, res) => {
-    if (!req.body) {
-        return res.status(400).send("Body vazio");
-    }
-
-    const { nome, total } = req.body;
-
-    if (!nome || !total) {
-        return res.status(400).send("Preencha todos os campos");
-    }
-
-    const sql = "INSERT INTO CONVIDADOS (nome, quantidade) VALUES (?, ?)";
-
-    con.query(sql, [nome, total], (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).send("Erro ao salvar no banco.");
-        }
-
-        res.send("Presença confirmada com sucesso!");
-    });
-});
-
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
 });

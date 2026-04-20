@@ -8,10 +8,13 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const con = mysql.createConnection(process.env.MYSQL_URL);
-app.use(express.static('public'));
+
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+app.get('/', (req, res) => {
+    res.send('API do aniversário funcionando 🎉');
+});
 
 con.connect((err) => {
     if (err) {
@@ -21,7 +24,6 @@ con.connect((err) => {
 
     console.log('Conectado ao MySQL!');
 
-    // ✅ cria tabela depois de conectar
     con.query(`
         CREATE TABLE IF NOT EXISTS CONVIDADOS (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,8 +36,17 @@ con.connect((err) => {
     });
 });
 
+
 app.post('/confirmar', (req, res) => {
+    if (!req.body) {
+        return res.status(400).send("Body vazio");
+    }
+
     const { nome, total } = req.body;
+
+    if (!nome || !total) {
+        return res.status(400).send("Preencha todos os campos");
+    }
 
     const sql = "INSERT INTO CONVIDADOS (nome, quantidade) VALUES (?, ?)";
 

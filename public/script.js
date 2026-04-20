@@ -3,44 +3,53 @@ const areaQuantidade = document.getElementById('area-quantidade');
 const inputQTD = document.getElementById('qtd-pessoas');
 const btnConfirmar = document.getElementById('btn-confirmar');
 const InputN = document.getElementById("input-nome");
+
 checkAcompanhante.addEventListener('change', function() {
-    if (this.checked) {
-        areaQuantidade.style.display = 'block';
-    } else {
-        areaQuantidade.style.display = 'none';
-    }
+    areaQuantidade.style.display = this.checked ? 'block' : 'none';
 });
 
+btnConfirmar.addEventListener('click', function(event) {
+    event.preventDefault(); 
 
-btnConfirmar.addEventListener('click', function() {
     let total = 1;
-    
-    if(checkAcompanhante.checked){
-        total = 1 + Number(inputQTD.value);
+    let nome = InputN.value.trim();
+
+    if (!nome) {
+        alert("Por favor, digite seu nome.");
+        return;
+    }
+
+    if (checkAcompanhante.checked) {
+        const acompanhantes = Number(inputQTD.value) || 0;
+        total = 1 + acompanhantes;
     }
     
-  
     const DadosEnviar = {
-        nome: InputN.value,
+        nome: nome,
         total: total
     };
     
     const config = {
         method: 'POST',
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(DadosEnviar) 
     };
 
     fetch('/confirmar', config)
-    .then(response => response.text()) 
-    .then(mensagem => {
-        console.log('Sucesso:', mensagem);
-        alert("Presença confirmada para: " + total + " pessoas(s)!");
+    .then(response => {
+        if (!response.ok) throw new Error();
+        return response.text();
+    }) 
+    .then(() => {
+        alert("Presença confirmada com sucesso!");
+        InputN.value = "";
+        inputQTD.value = "";
+        checkAcompanhante.checked = false;
+        areaQuantidade.style.display = 'none';
     })
-    .catch(erro => {
-        console.error('Erro ao conectar com o servidor:', erro);
-        alert("Erro ao conectar com o servidor.");
+    .catch(() => {
+        alert("Erro ao enviar confirmação.");
     });
 });

@@ -9,17 +9,6 @@ const port = process.env.PORT || 3000;
 
 app.use(cors()); 
 app.use(express.json()); 
-
-
-let con = mysql.createConnection({
-    host: process.env.MYSQLHOST,
-user: process.env.MYSQLUSER,
-password: process.env.MYSQLPASSWORD,
-database: process.env.MYSQLDATABASE,
-port: process.env.MYSQLPORT
-});
-
-
 con.connect(function(err){
     if (err) {
         console.error('Erro ao conectar ao MySQL:', err);

@@ -12,9 +12,8 @@ const con = mysql.createConnection(process.env.MYSQL_URL);
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('API do aniversário funcionando 🎉');
-});
+
+app.use(express.static('public'));
 
 con.connect((err) => {
     if (err) {
@@ -35,7 +34,6 @@ con.connect((err) => {
         else console.log("Tabela pronta!");
     });
 });
-
 
 app.post('/confirmar', (req, res) => {
     if (!req.body) {

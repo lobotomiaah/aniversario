@@ -11,6 +11,7 @@ const con = mysql.createConnection(process.env.MYSQL_URL);
 app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 con.connect((err) => {
     if (err) {

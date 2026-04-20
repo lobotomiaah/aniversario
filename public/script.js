@@ -33,7 +33,7 @@ btnConfirmar.addEventListener('click', function() {
         body: JSON.stringify(DadosEnviar) 
     };
 
-    fetch('http://localhost:3000/confirmar', config)
+    fetch('/confirmar', config)
     .then(response => response.text()) 
     .then(mensagem => {
         console.log('Sucesso:', mensagem);

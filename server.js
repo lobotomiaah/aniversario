@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const con = mysql.createConnection(process.env.MYSQL_URL);
-
+app.use(express.static('public'));
 app.use(cors());
 app.use(express.json());
 

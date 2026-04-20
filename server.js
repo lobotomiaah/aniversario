@@ -6,10 +6,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 const con = mysql.createConnection(process.env.MYSQL_URL || {
-    host: process.env.MYSQLHOST,
-    user: process.env.MYSQLUSER,
-    password: process.env.MYSQLPASSWORD,
-    database: process.env.MYSQLDATABASE,
+    host: process.env.MYSQLHOST || process.env.MYSQL_HOST,
+    user: process.env.MYSQLUSER || process.env.MYSQL_USER,
+    password: process.env.MYSQLPASSWORD || process.env.MYSQL_ROOT_PASSWORD,
+    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
     port: process.env.MYSQLPORT || 3306
 });
 

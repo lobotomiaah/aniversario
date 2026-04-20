@@ -11,10 +11,13 @@ const con = mysql.createConnection(process.env.MYSQL_URL);
 
 app.use(cors());
 app.use(express.json());
-
-
+app.use(cors());
+app.use(express.json());
 app.use(express.static('public'));
 
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
+});
 con.connect((err) => {
     if (err) {
         console.error('Erro ao conectar ao MySQL:', err);

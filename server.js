@@ -10,13 +10,19 @@ app.use(express.json());
 app.use(express.static('public'));
 
 
-const con = mysql.createConnection(process.env.MYSQL_URL || {
+const pool = mysql.createPool(process.env.MYSQL_URL || {
     host: process.env.MYSQLHOST || process.env.MYSQL_HOST,
     user: process.env.MYSQLUSER || process.env.MYSQL_USER,
     password: process.env.MYSQLPASSWORD || process.env.MYSQL_ROOT_PASSWORD,
     database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
-    port: process.env.MYSQLPORT || 3306
+    port: process.env.MYSQLPORT || 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
+
+
+const con = pool;
 
 con.connect((err) => {
     if (err) {
@@ -39,7 +45,7 @@ con.connect((err) => {
     });
 });
 
-// 3. ROTAS
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });

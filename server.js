@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-
+// 1. Criando o Pool de conexões (resolve o erro de "connection closed")
 const pool = mysql.createPool(process.env.MYSQL_URL || {
     host: process.env.MYSQLHOST || process.env.MYSQL_HOST,
     user: process.env.MYSQLUSER || process.env.MYSQL_USER,
@@ -21,27 +21,26 @@ const pool = mysql.createPool(process.env.MYSQL_URL || {
     queueLimit: 0
 });
 
-
-const con = pool;
-
-con.connect((err) => {
+// 2. Testando a conexão e criando a tabela (agora SEM Auto Increment)
+pool.getConnection((err, connection) => {
     if (err) {
         console.error('❌ ERRO AO CONECTAR:', err.message);
         return;
     }
-    console.log('✅ Conectado ao MySQL!');
+    console.log('✅ Conectado ao MySQL via Pool!');
 
     const sqlCreateTable = `
         CREATE TABLE IF NOT EXISTS CONVIDADOS (
-            id INT AUTO_INCREMENT PRIMARY KEY,
+            id INT PRIMARY KEY,
             nome VARCHAR(255) NOT NULL,
             quantidade INT NOT NULL
         )
     `;
 
-    con.query(sqlCreateTable, (err) => {
+    connection.query(sqlCreateTable, (err) => {
+        connection.release(); // Libera a conexão de volta
         if (err) console.error("❌ Erro ao configurar tabela:", err.message);
-        else console.log("🚀 Tabela CONVIDADOS pronta (com Auto Increment)!");
+        else console.log("🚀 Tabela CONVIDADOS pronta (ID manual ativado)!");
     });
 });
 
@@ -50,6 +49,7 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+// 3. Rota de Confirmação com o ID gerado pelo Node.js
 app.post('/confirmar', (req, res) => {
     const { nome, total } = req.body;
 
@@ -57,8 +57,13 @@ app.post('/confirmar', (req, res) => {
         return res.status(400).send("Preencha todos os campos");
     }
 
-    const sql = "INSERT INTO CONVIDADOS (nome, quantidade) VALUES (?, ?)";
-    con.query(sql, [nome, total], (err) => {
+    // Gerando um ID numérico aleatório para ignorar o banco
+    const idGerado = Math.floor(Math.random() * 999999) + 1;
+
+    // Enviando o ID, nome e quantidade
+    const sql = "INSERT INTO CONVIDADOS (id, nome, quantidade) VALUES (?, ?, ?)";
+    
+    pool.query(sql, [idGerado, nome, total], (err) => {
         if (err) {
             console.error("❌ Erro no INSERT:", err.message);
             return res.status(500).send("Erro ao salvar no banco.");
@@ -69,7 +74,7 @@ app.post('/confirmar', (req, res) => {
 
 app.get('/lista', (req, res) => {
     const sql = "SELECT * FROM CONVIDADOS";
-    con.query(sql, (err, results) => {
+    pool.query(sql, (err, results) => {
         if (err) {
             console.error("❌ Erro ao buscar:", err.message);
             return res.status(500).send("Erro ao buscar convidados.");

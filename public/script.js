@@ -1,13 +1,6 @@
-const checkAcompanhante = document.getElementById('check-acompanhante');
-const areaQuantidade = document.getElementById('area-quantidade');
-const inputQTD = document.getElementById('qtd-pessoas');
+
 const btnConfirmar = document.getElementById('btn-confirmar');
 const InputN = document.getElementById("input-nome");
-
-checkAcompanhante.addEventListener('change', function() {
-    areaQuantidade.style.display = this.checked ? 'block' : 'none';
-});
-
 btnConfirmar.addEventListener('click', function(event) {
     event.preventDefault(); 
 
@@ -18,12 +11,6 @@ btnConfirmar.addEventListener('click', function(event) {
         alert("Por favor, digite seu nome.");
         return;
     }
-
-    if (checkAcompanhante.checked) {
-        const acompanhantes = Number(inputQTD.value) || 0;
-        total = 1 + acompanhantes;
-    }
-    
     const DadosEnviar = {
         nome: nome,
         total: total
@@ -45,9 +32,6 @@ btnConfirmar.addEventListener('click', function(event) {
     .then(() => {
         alert("Presença confirmada com sucesso!");
         InputN.value = "";
-        inputQTD.value = "";
-        checkAcompanhante.checked = false;
-        areaQuantidade.style.display = 'none';
     })
     .catch(() => {
         alert("Erro ao enviar confirmação.");

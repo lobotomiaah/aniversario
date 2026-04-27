@@ -9,13 +9,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// 1. CONFIGURAÇÃO DO TURSO
 const client = createClient({
   url: process.env.TURSO_DATABASE_URL,
   authToken: process.env.TURSO_AUTH_TOKEN,
 });
 
-// 2. CRIAR TABELA (No SQLite o Auto Increment é automático no INTEGER PRIMARY KEY)
+
 async function initDb() {
     try {
         await client.execute(`
@@ -36,17 +35,15 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-// 3. ROTA DE CONFIRMAÇÃO
 app.post('/confirmar', async (req, res) => {
     const { nome, total } = req.body;
-    const qtd = total || req.body.quantidade;
+    const qtd = total || 1;
 
     if (!nome || qtd === undefined) {
-        return res.status(400).send("Preencha nome e quantidade.");
+        return res.status(400).send("O nome é obrigatorio");
     }
 
     try {
-        // No Turso/SQLite, não passamos o ID, ele gera sozinho!
         await client.execute({
             sql: "INSERT INTO CONVIDADOS (nome, quantidade) VALUES (?, ?)",
             args: [nome, qtd]
@@ -59,7 +56,6 @@ app.post('/confirmar', async (req, res) => {
     }
 });
 
-// 4. ROTA DA LISTA
 app.get('/lista', async (req, res) => {
     try {
         const result = await client.execute("SELECT * FROM CONVIDADOS");

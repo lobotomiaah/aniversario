@@ -85,12 +85,12 @@ app.get('/lista', async (req, res) => {
         result.rows.forEach(c => {
             if(nomesuspeito(c.nome)) return;
             const nome_seguro = escaparhtml(c.nome);
-            html += `<li style="padding:12px 16px; border-bottom:1px solid #2a2a2a; text-align:left;>
+            html += `<li style="padding:12px 16px; border-bottom:1px solid #2a2a2a; text-align:left;">
              ${nome_seguro} - <strong>${c.quantidade} pessoas</strong>
             </li>`;
             
         });
-        html += `</ul><br><a href="/" style="color:#a78bfa;">← Voltar</a></body>`;
+        html += `</ul><br><a href="/" style="color:#a78bfa;">← Voltar</a></div></body>`;
         res.send(html);
     } catch (err) {
         res.status(500).send("Erro ao buscar lista: " + err.message);

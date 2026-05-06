@@ -59,18 +59,35 @@ app.post('/confirmar', async (req, res) => {
 app.get('/lista', async (req, res) => {
     try {
         const result = await client.execute("SELECT * FROM CONVIDADOS");
-        
-        let html = `<body style="background:#121212;color:white;font-family:sans-serif;text-align:center;">`;
-        html += `<h1>Lista de Confirmados 📝</h1><ul>`;
+         function nomesuspeito(texto){
+            const t = texto.toLowerCase();
+            return(
+                t.includes("<") ||
+                t.includes(">") ||
+                t.includes("script") ||
+                t.includes("onerror") ||
+                t.includes("javascript:")
+            );
+        }
+            function escaparhtml(texto){
+                return texto
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+            }
+         }
         
         result.rows.forEach(c => {
-            html += `<li style="list-style:none;margin:10px;padding:10px;background:#1e1e1e;border-radius:5px;">
-                        ${c.nome} - <strong>${c.quantidade} pessoas</strong>
-                     </li>`;
+            if(nomesuspeito(c.nome)) return;
+            const nome_seguro = escaparhtml(c.nome);
+            html += `<li>
+             ${nome_seguro} - <strong>${c.quantidade} pessoas</strong>
+            </li>`;
+            
         });
-        
-        html += `</ul><br><a href="/" style="color:#a78bfa;">← Voltar</a></body>`;
-        res.send(html);
+
     } catch (err) {
         res.status(500).send("Erro ao buscar lista: " + err.message);
     }

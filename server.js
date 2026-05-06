@@ -60,7 +60,7 @@ app.get('/lista', async (req, res) => {
     try {
         const result = await client.execute("SELECT * FROM CONVIDADOS");
          function nomesuspeito(texto){
-            const t = texto.toLowerCase();
+            const t = String(texto || "").toLowerCase();
             return(
                 t.includes("<") ||
                 t.includes(">") ||
@@ -77,8 +77,9 @@ app.get('/lista', async (req, res) => {
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#39;");
             }
-         }
-        
+        let html = `<body style="background:#121212;color:white;font-family:sans-serif;text-align:center;">`;
+        html += `<h1>Lista de Confirmados 📝</h1><ul>`;
+
         result.rows.forEach(c => {
             if(nomesuspeito(c.nome)) return;
             const nome_seguro = escaparhtml(c.nome);
@@ -87,12 +88,13 @@ app.get('/lista', async (req, res) => {
             </li>`;
             
         });
-
+        html += `</ul><br><a href="/" style="color:#a78bfa;">← Voltar</a></body>`;
+        res.send(html);
     } catch (err) {
         res.status(500).send("Erro ao buscar lista: " + err.message);
     }
 });
 
 app.listen(port, () => {
-    console.log(`📡 Servidor online na porta ${port}`);
+    console.log(` Servidor online na porta ${port}`);
 });

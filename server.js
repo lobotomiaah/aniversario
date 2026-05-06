@@ -85,7 +85,7 @@ app.get('/lista', async (req, res) => {
         result.rows.forEach(c => {
             if(nomesuspeito(c.nome)) return;
             const nome_seguro = escaparhtml(c.nome);
-            html += `<li>
+            html += `<li style="padding:12px 16px; border-bottom:1px solid #2a2a2a; text-align:left;>
              ${nome_seguro} - <strong>${c.quantidade} pessoas</strong>
             </li>`;
             

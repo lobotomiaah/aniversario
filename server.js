@@ -77,9 +77,11 @@ app.get('/lista', async (req, res) => {
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#39;");
             }
-        let html = `<body style="background:#121212;color:white;font-family:sans-serif;text-align:center;">`;
-        html += `<h1>Lista de Confirmados 📝</h1><ul>`;
-
+        let html = `<body style="background:#121212;color:white;font-family:sans-serif;display:flex;justify-content:center;"> 
+        <div style="width:400px;">
+        <h1 style="text-align:center;">Lista de Confirmados 📝</h1>
+        <ul style="list-style:none;padding:0;">
+        `;
         result.rows.forEach(c => {
             if(nomesuspeito(c.nome)) return;
             const nome_seguro = escaparhtml(c.nome);
